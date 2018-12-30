@@ -64,6 +64,9 @@
                  @"regionCode": countryCode == nil ? @"" : countryCode,
                  @"formattedPhoneNumber": formattedNumber == nil ? @"" : formattedNumber,
                  });
+    } else if ([@"getRegionCode" isEqualToString:call.method]) {
+        NSString *countryPrefix = [self.phoneUtil getCountryCodeForRegion:number];
+        result(countryPrefix);
     } else {
         result(FlutterMethodNotImplemented);
     }

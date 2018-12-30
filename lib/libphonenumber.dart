@@ -54,4 +54,14 @@ class PhoneNumberUtil {
       formattedPhoneNumber: result['formattedPhoneNumber'],
     );
   }
+
+  static Future<String> getRegionCode({
+    @required String isoCode,
+  }) async {
+    String result = await _channel.invokeMethod('getRegionCode', {
+      'iso_code': isoCode,
+    });
+
+    return result;
+  }
 }
