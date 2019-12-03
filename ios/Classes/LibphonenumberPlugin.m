@@ -49,7 +49,7 @@
     } else if ([@"getRegionInfo" isEqualToString:call.method]) {
         NSString *regionCode = [self.phoneUtil getRegionCodeForNumber:number];
         NSNumber *countryCode = [self.phoneUtil getCountryCodeForRegion:regionCode];
-        NSString *formattedNumber = [self.phoneUtil format:number
+        NSString *nationalFormat = [self.phoneUtil format:number
                                               numberFormat:NBEPhoneNumberFormatNATIONAL
                                                      error:&err];
         if (err != nil ) {
@@ -58,11 +58,19 @@
                                        details:nil]);
             return;
         }
-        
+        NSString *internationalFormat = [self.phoneUtil format:number
+                                              numberFormat:NBEPhoneNumberFormatINTERNATIONAL
+                                                     error:&err];
+
+        NSString *e164Format = [self.phoneUtil format:number
+                                              numberFormat:NBEPhoneNumberFormatE164
+                                                     error:&err];
         result(@{
                  @"isoCode": regionCode == nil ? @"" : regionCode,
                  @"regionCode": countryCode == nil ? @"" : [countryCode stringValue],
-                 @"formattedPhoneNumber": formattedNumber == nil ? @"" : formattedNumber,
+                 @"nationalFormat": nationalFormat == nil ? @"" : nationalFormat,
+                 @"internationalFormat": internationalFormat == nil ? @"" : internationalFormat,
+                 @"e164Format": e164Format == nil ? @"" : e164Format,
                  });
     } else if ([@"getRegionCode" isEqualToString:call.method]) {
         NSString *countryPrefix = [self.phoneUtil getCountryCodeForRegion:number];

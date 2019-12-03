@@ -6,13 +6,15 @@ import 'package:meta/meta.dart';
 class RegionInfo {
   String regionPrefix;
   String isoCode;
-  String formattedPhoneNumber;
+  String nationalFormat;
+  String internationalFormat;
+  String e164Format;
 
-  RegionInfo({this.regionPrefix, this.isoCode, this.formattedPhoneNumber});
+  RegionInfo({this.regionPrefix, this.isoCode, this.nationalFormat, this.internationalFormat, this.e164Format});
 
   @override
   String toString() {
-    return '[RegionInfo prefix=$regionPrefix, iso=$isoCode, formatted=$formattedPhoneNumber]';
+    return '[RegionInfo prefix=$regionPrefix, iso=$isoCode, formatted=$nationalFormat]';
   }
 }
 
@@ -51,7 +53,9 @@ class PhoneNumberUtil {
     return RegionInfo(
       regionPrefix: result['regionCode'],
       isoCode: result['isoCode'],
-      formattedPhoneNumber: result['formattedPhoneNumber'],
+      nationalFormat: result['nationalFormat'],
+      internationalFormat: result['internationalFormat'],
+      e164Format: result['e164Format'],
     );
   }
 

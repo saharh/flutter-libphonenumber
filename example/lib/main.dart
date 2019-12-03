@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
             Padding(
               padding: EdgeInsets.only(left: 12.0),
               child: Text(
-                'Prefix=${_regionInfo?.regionPrefix}, ISO=${_regionInfo?.isoCode}, Formatted=${_regionInfo?.formattedPhoneNumber}',
+                'Prefix=${_regionInfo?.regionPrefix}, ISO=${_regionInfo?.isoCode}, Formatted=${_regionInfo?.nationalFormat}',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
