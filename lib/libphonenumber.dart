@@ -9,8 +9,9 @@ class RegionInfo {
   String nationalFormat;
   String internationalFormat;
   String e164Format;
+  bool isValid;
 
-  RegionInfo({this.regionPrefix, this.isoCode, this.nationalFormat, this.internationalFormat, this.e164Format});
+  RegionInfo({this.regionPrefix, this.isoCode, this.nationalFormat, this.internationalFormat, this.e164Format, this.isValid});
 
   @override
   String toString() {
@@ -51,12 +52,12 @@ class PhoneNumberUtil {
     });
 
     return RegionInfo(
-      regionPrefix: result['regionCode'],
-      isoCode: result['isoCode'],
-      nationalFormat: result['nationalFormat'],
-      internationalFormat: result['internationalFormat'],
-      e164Format: result['e164Format'],
-    );
+        regionPrefix: result['regionCode'],
+        isoCode: result['isoCode'],
+        nationalFormat: result['nationalFormat'],
+        internationalFormat: result['internationalFormat'],
+        e164Format: result['e164Format'],
+        isValid: result['isValid']);
   }
 
   static Future<String> getRegionCode({

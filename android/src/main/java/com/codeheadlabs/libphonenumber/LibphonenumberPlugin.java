@@ -85,13 +85,14 @@ public class LibphonenumberPlugin implements MethodCallHandler {
             String nationalFormat = phoneUtil.format(p, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
             String internationalFormat = phoneUtil.format(p, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
             String e164Format = phoneUtil.format(p, PhoneNumberUtil.PhoneNumberFormat.E164);
-
-            Map<String, String> resultMap = new HashMap<>();
+            boolean isValid = phoneUtil.isValidNumber(p);
+            Map<String, Object> resultMap = new HashMap<>();
             resultMap.put("isoCode", regionCode);
             resultMap.put("regionCode", countryCode);
             resultMap.put("nationalFormat", nationalFormat);
             resultMap.put("internationalFormat", internationalFormat);
             resultMap.put("e164Format", e164Format);
+            resultMap.put("isValid", isValid);
             result.success(resultMap);
         } catch (NumberParseException e) {
             result.error("NumberParseException", e.getMessage(), null);

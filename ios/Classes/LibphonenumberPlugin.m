@@ -60,17 +60,19 @@
         }
         NSString *internationalFormat = [self.phoneUtil format:number
                                               numberFormat:NBEPhoneNumberFormatINTERNATIONAL
-                                                     error:&err];
+                                                     error:&err];  // TODO test this
 
         NSString *e164Format = [self.phoneUtil format:number
                                               numberFormat:NBEPhoneNumberFormatE164
-                                                     error:&err];
+                                                     error:&err];  // TODO test this
+        BOOL isValid = [self.phoneUtil isValidNumber:number]; // TODO test this
         result(@{
                  @"isoCode": regionCode == nil ? @"" : regionCode,
                  @"regionCode": countryCode == nil ? @"" : [countryCode stringValue],
                  @"nationalFormat": nationalFormat == nil ? @"" : nationalFormat,
                  @"internationalFormat": internationalFormat == nil ? @"" : internationalFormat,
                  @"e164Format": e164Format == nil ? @"" : e164Format,
+                 @"isValid": isValid,
                  });
     } else if ([@"getRegionCode" isEqualToString:call.method]) {
         NSString *countryPrefix = [self.phoneUtil getCountryCodeForRegion:number];

@@ -88,14 +88,17 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('Region Info:'),
-            Padding(
-              padding: EdgeInsets.only(left: 12.0),
-              child: Text(
-                'Prefix=${_regionInfo?.regionPrefix}, ISO=${_regionInfo?.isoCode}, Formatted=${_regionInfo?.nationalFormat}',
-                style: TextStyle(fontWeight: FontWeight.bold),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 12.0),
+                child: Text(
+                  'Prefix=${_regionInfo?.regionPrefix}, ISO=${_regionInfo?.isoCode}, Formatted=${_regionInfo?.nationalFormat}, Valid=${_regionInfo?.isValid}',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
