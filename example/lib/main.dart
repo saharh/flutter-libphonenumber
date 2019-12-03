@@ -15,6 +15,15 @@ class _MyAppState extends State<MyApp> {
   String _normalized = '';
   RegionInfo _regionInfo;
   String _formatted = '';
+  String _regionIso = 'US';
+  TextEditingController _regionIsoController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _regionIsoController = TextEditingController(text: _regionIso);
+  }
 
   @override
   void dispose() {
@@ -25,10 +34,10 @@ class _MyAppState extends State<MyApp> {
   _showDetails() async {
     var s = _textController.text;
 
-    bool isValid = await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: 'US');
-    String normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(phoneNumber: s, isoCode: 'US');
-    RegionInfo regionInfo = await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: 'US');
-    String formatted = await PhoneNumberUtil.formatPhone(phone: s, regionIsoCode: 'US');
+    bool isValid = await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: _regionIso);
+    String normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(phoneNumber: s, isoCode: _regionIso);
+    RegionInfo regionInfo = await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: _regionIso);
+    String formatted = await PhoneNumberUtil.formatPhone(phone: s, regionIsoCode: _regionIso);
     setState(() {
       _isValid = isValid;
       _normalized = normalizedNumber;
@@ -110,6 +119,24 @@ class _MyAppState extends State<MyApp> {
                   'Prefix=${_regionInfo?.regionPrefix}, ISO=${_regionInfo?.isoCode}, Formatted=${_regionInfo?.nationalFormat}, Valid=${_regionInfo?.isValid}',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Region Code:'),
+            Container(
+              width: 80,
+              padding: EdgeInsets.only(left: 12.0),
+              child: TextField(
+                controller: _regionIsoController,
+                onChanged: (val) {
+                  setState(() {
+                    _regionIso = val;
+                  });
+                },
               ),
             ),
           ],
