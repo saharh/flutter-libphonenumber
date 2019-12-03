@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'package:libphonenumber/libphonenumber.dart';
 
@@ -15,6 +14,7 @@ class _MyAppState extends State<MyApp> {
   bool _isValid = false;
   String _normalized = '';
   RegionInfo _regionInfo;
+  String _formatted = '';
 
   @override
   void dispose() {
@@ -25,17 +25,15 @@ class _MyAppState extends State<MyApp> {
   _showDetails() async {
     var s = _textController.text;
 
-    bool isValid =
-        await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: 'US');
-    String normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(
-        phoneNumber: s, isoCode: 'US');
-    RegionInfo regionInfo =
-        await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: 'US');
-
+    bool isValid = await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: 'US');
+    String normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(phoneNumber: s, isoCode: 'US');
+    RegionInfo regionInfo = await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: 'US');
+    String formatted = await PhoneNumberUtil.formatPhone(phone: s, regionIsoCode: 'US');
     setState(() {
       _isValid = isValid;
       _normalized = normalizedNumber;
       _regionInfo = regionInfo;
+      _formatted = formatted;
     });
   }
 
@@ -82,6 +80,19 @@ class _MyAppState extends State<MyApp> {
               padding: EdgeInsets.only(left: 12.0),
               child: Text(
                 _normalized,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Formatted:'),
+            Padding(
+              padding: EdgeInsets.only(left: 12.0),
+              child: Text(
+                _formatted,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),

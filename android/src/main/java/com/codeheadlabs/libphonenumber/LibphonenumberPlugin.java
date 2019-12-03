@@ -1,5 +1,6 @@
 package com.codeheadlabs.libphonenumber;
 
+import com.google.i18n.phonenumbers.AsYouTypeFormatter;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -18,6 +19,9 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class LibphonenumberPlugin implements MethodCallHandler {
     private static PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+
+    private AsYouTypeFormatter formatter;
+    private String formatterRegionIsoCode;
 
     /**
      * Plugin registration.
@@ -42,10 +46,34 @@ public class LibphonenumberPlugin implements MethodCallHandler {
             case "getRegionCode":
                 handleGetRegionCode(call, result);
                 break;
+            case "formatPhone":
+                formatPhone(call, result);
+                break;
 
             default:
                 result.notImplemented();
                 break;
+        }
+    }
+
+    private void formatPhone(MethodCall call, Result result) {
+        final String phoneNumber = call.argument("phone_number");
+        final String regionIsoCode = call.argument("region_iso_code");
+
+        try {
+            if (!regionIsoCode.equals(formatterRegionIsoCode) || formatter == null) {
+                formatter = phoneUtil.getAsYouTypeFormatter(regionIsoCode);
+                formatterRegionIsoCode = regionIsoCode;
+            }
+            formatter.clear();
+            String formatted = null;
+            for (int i = 0; i < phoneNumber.length(); i++) {
+                char c = phoneNumber.charAt(i);
+                formatted = formatter.inputDigit(c);
+            }
+            result.success(formatted);
+        } catch (Exception e) {
+            result.error("Exception", e.getMessage(), null);
         }
     }
 

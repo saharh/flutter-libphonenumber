@@ -69,4 +69,16 @@ class PhoneNumberUtil {
 
     return result;
   }
+
+  static Future<String> formatPhone({
+    @required String phone,
+    @required String regionIsoCode,
+  }) async {
+    String result = await _channel.invokeMethod('formatPhone', {
+      'phone_number': phone,
+      'region_iso_code': regionIsoCode,
+    });
+
+    return result;
+  }
 }
