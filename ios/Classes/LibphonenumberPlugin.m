@@ -1,9 +1,12 @@
 #import "LibphonenumberPlugin.h"
 
 #import "NBPhoneNumberUtil.h"
+#import "NBAsYouTypeFormatter.h"
 
 @interface LibphonenumberPlugin ()
 @property(nonatomic, retain) NBPhoneNumberUtil *phoneUtil;
+@property(nonatomic, retain) NBAsYouTypeFormatter *formatter;
+@property(nonatomic, retain) NSString *formatterRegionIsoCode;
 @end
 
 @implementation LibphonenumberPlugin
@@ -22,6 +25,28 @@
     
     NSString *phoneNumber = call.arguments[@"phone_number"];
     NSString *isoCode = call.arguments[@"iso_code"];
+    
+    if ([@"formatPhone" isEqualToString:call.method]) {
+        NSString *formatted;
+        @try {
+            NSString *regionIsoCode = call.arguments[@"region_iso_code"];
+            
+            if (_formatter == nil || regionIsoCode != _formatterRegionIsoCode) {
+                _formatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:regionIsoCode];
+                _formatterRegionIsoCode = regionIsoCode;
+            }
+            [_formatter clear];
+            formatted = [_formatter inputString:phoneNumber];
+        } @catch (NSException *exception) {
+            result([FlutterError errorWithCode:@"invalid_phone_number"
+                                       message:@"Couldn't format phone number"
+                                       details:nil]);
+            return;
+        }
+        result(formatted);
+        return;
+    }
+    
     NBPhoneNumber *number = nil;
     if (phoneNumber != nil) {
         number = [self.phoneUtil parse:phoneNumber defaultRegion:isoCode error:&err];
@@ -60,19 +85,19 @@
         }
         NSString *internationalFormat = [self.phoneUtil format:number
                                               numberFormat:NBEPhoneNumberFormatINTERNATIONAL
-                                                     error:&err];  // TODO test this
+                                                     error:&err];
 
         NSString *e164Format = [self.phoneUtil format:number
                                               numberFormat:NBEPhoneNumberFormatE164
-                                                     error:&err];  // TODO test this
-        BOOL isValid = [self.phoneUtil isValidNumber:number]; // TODO test this
+                                                     error:&err];
+        BOOL isValid = [self.phoneUtil isValidNumber:number];
         result(@{
                  @"isoCode": regionCode == nil ? @"" : regionCode,
                  @"regionCode": countryCode == nil ? @"" : [countryCode stringValue],
                  @"nationalFormat": nationalFormat == nil ? @"" : nationalFormat,
                  @"internationalFormat": internationalFormat == nil ? @"" : internationalFormat,
                  @"e164Format": e164Format == nil ? @"" : e164Format,
-                 @"isValid": isValid,
+                 @"isValid": [NSNumber numberWithBool:isValid],
                  });
     } else if ([@"getRegionCode" isEqualToString:call.method]) {
         NSString *countryPrefix = [self.phoneUtil getCountryCodeForRegion:number];
