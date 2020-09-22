@@ -48,12 +48,12 @@ public class LibphonenumberPlugin implements MethodCallHandler {
                 break;
             case "getRegionInfo":
                 handleGetRegionInfo(call, result);
-        break;
-      case "getNumberType":
-        handleGetNumberType(call, result);
-        break;
-      case "formatAsYouType":
-        formatAsYouType(call, result);
+                break;
+          case "getNumberType":
+                handleGetNumberType(call, result);
+                break;
+          case "formatAsYouType":
+                formatAsYouType(call, result);
                 break;
             case "getRegionCode":
                 handleGetRegionCode(call, result);
@@ -97,7 +97,8 @@ public class LibphonenumberPlugin implements MethodCallHandler {
             Phonenumber.PhoneNumber p = phoneUtil.parse(phoneNumber, isoCode.toUpperCase());
             result.success(phoneUtil.isValidNumber(p));
         } catch (NumberParseException e) {
-            result.error("NumberParseException", e.getMessage(), null);
+//            result.error("NumberParseException", e.getMessage(), null);
+            result.success(false);
         }
     }
 
