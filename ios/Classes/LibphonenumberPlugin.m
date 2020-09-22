@@ -48,6 +48,14 @@
     }
     
     NBPhoneNumber *number = nil;
+
+    // Call formatAsYouType before parse below because a partial number will not be parsable.
+    if ([@"formatAsYouType" isEqualToString:call.method]) {
+        NBAsYouTypeFormatter *f = [[NBAsYouTypeFormatter alloc] initWithRegionCode:isoCode];
+        result([f inputString:phoneNumber]);
+        return;
+    }
+    
     if (phoneNumber != nil) {
         number = [self.phoneUtil parse:phoneNumber defaultRegion:isoCode error:&err];
         if (err != nil) {
@@ -99,9 +107,9 @@
                  @"e164Format": e164Format == nil ? @"" : e164Format,
                  @"isValid": [NSNumber numberWithBool:isValid],
                  });
-    } else if ([@"getRegionCode" isEqualToString:call.method]) {
-        NSString *countryPrefix = [self.phoneUtil getCountryCodeForRegion:number];
-        result(countryPrefix);
+    } else if ([@"getNumberType" isEqualToString:call.method]) {
+        NSNumber *numberType = [NSNumber numberWithInteger:[self.phoneUtil getNumberType:number]];
+        result(numberType);
     } else {
         result(FlutterMethodNotImplemented);
     }
