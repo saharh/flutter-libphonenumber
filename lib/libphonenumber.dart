@@ -17,6 +17,29 @@ class RegionInfo {
   String toString() {
     return '[RegionInfo prefix=$regionPrefix, iso=$isoCode, formatted=$nationalFormat]';
   }
+
+  factory RegionInfo.fromMap(Map<String, dynamic> map) {
+    return new RegionInfo(
+      regionPrefix: map['regionCode'] as String,
+      isoCode: map['isoCode'] as String,
+      nationalFormat: map['nationalFormat'] as String,
+      internationalFormat: map['internationalFormat'] as String,
+      e164Format: map['e164Format'] as String,
+      isValid: map['isValid'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    // ignore: unnecessary_cast
+    return {
+      'regionCode': this.regionPrefix,
+      'isoCode': this.isoCode,
+      'nationalFormat': this.nationalFormat,
+      'internationalFormat': this.internationalFormat,
+      'e164Format': this.e164Format,
+      'isValid': this.isValid,
+    } as Map<String, dynamic>;
+  }
 }
 
 enum PhoneNumberType {
@@ -66,18 +89,11 @@ class PhoneNumberUtil {
     @required String phoneNumber,
     @required String isoCode,
   }) async {
-    Map<dynamic, dynamic> result = await _channel.invokeMethod('getRegionInfo', {
+    Map<String, dynamic> result = Map<String, dynamic>.from(await _channel.invokeMethod('getRegionInfo', {
       'phone_number': phoneNumber,
       'iso_code': isoCode,
-    });
-
-    return RegionInfo(
-        regionPrefix: result['regionCode'],
-        isoCode: result['isoCode'],
-        nationalFormat: result['nationalFormat'],
-        internationalFormat: result['internationalFormat'],
-        e164Format: result['e164Format'],
-        isValid: result['isValid']);
+    }));
+    return RegionInfo.fromMap(result);
   }
 
   static Future<String> getRegionCode({
