@@ -8,10 +8,12 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import com.google.i18n.phonenumbers.AsYouTypeFormatter;
 import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberToCarrierMapper;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
@@ -25,6 +27,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class LibphonenumberPlugin implements MethodCallHandler {
     private static PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+    private static PhoneNumberToCarrierMapper phoneNumberToCarrierMapper = PhoneNumberToCarrierMapper.getInstance();
 
     private AsYouTypeFormatter formatter;
     private String formatterRegionIsoCode;
@@ -49,10 +52,10 @@ public class LibphonenumberPlugin implements MethodCallHandler {
             case "getRegionInfo":
                 handleGetRegionInfo(call, result);
                 break;
-          case "getNumberType":
+            case "getNumberType":
                 handleGetNumberType(call, result);
                 break;
-          case "formatAsYouType":
+            case "formatAsYouType":
                 formatAsYouType(call, result);
                 break;
             case "getRegionCode":
@@ -60,6 +63,9 @@ public class LibphonenumberPlugin implements MethodCallHandler {
                 break;
             case "formatPhone":
                 formatPhone(call, result);
+                break;
+            case "getNameForNumber":
+                handleGetNameForNumber(call, result);
                 break;
 
             default:
@@ -86,6 +92,18 @@ public class LibphonenumberPlugin implements MethodCallHandler {
             result.success(formatted);
         } catch (Exception e) {
             result.error("Exception", e.getMessage(), null);
+        }
+    }
+
+    private void handleGetNameForNumber(MethodCall call, Result result) {
+        final String phoneNumber = call.argument("phone_number");
+        final String isoCode = call.argument("iso_code");
+
+        try {
+            Phonenumber.PhoneNumber p = phoneUtil.parse(phoneNumber, isoCode.toUpperCase());
+            result.success(phoneNumberToCarrierMapper.getNameForNumber(p, Locale.getDefault()));
+        } catch (NumberParseException e) {
+            result.error("NumberParseException", e.getMessage(), null);
         }
     }
 
@@ -149,68 +167,68 @@ public class LibphonenumberPlugin implements MethodCallHandler {
         } catch (Exception e) {
             result.error("GetRegionCode Failed", e.getMessage(), null);
         }
-  }
-  
-  private void handleGetNumberType(MethodCall call, Result result) {
-    final String phoneNumber = call.argument("phone_number");
-    final String isoCode = call.argument("iso_code");
-
-    try {
-      Phonenumber.PhoneNumber p = phoneUtil.parse(phoneNumber, isoCode.toUpperCase());
-      PhoneNumberUtil.PhoneNumberType t = phoneUtil.getNumberType(p);
-
-      switch (t) {
-        case FIXED_LINE:
-          result.success(0);
-          break;
-        case MOBILE:
-          result.success(1);
-          break;
-        case FIXED_LINE_OR_MOBILE:
-          result.success(2);
-          break;
-        case TOLL_FREE:
-          result.success(3);
-          break;
-        case PREMIUM_RATE:
-          result.success(4);
-          break;
-        case SHARED_COST:
-          result.success(5);
-          break;
-        case VOIP:
-          result.success(6);
-          break;
-        case PERSONAL_NUMBER:
-          result.success(7);
-          break;
-        case PAGER:
-          result.success(8);
-          break;
-        case UAN:
-          result.success(9);
-          break;
-        case VOICEMAIL:
-          result.success(10);
-          break;
-        case UNKNOWN:
-          result.success(-1);
-          break;
-      }
-    } catch (NumberParseException e) {
-      result.error("NumberParseException", e.getMessage(), null);
     }
-  }
-  
-  private void formatAsYouType(MethodCall call, Result result) {
-    final String phoneNumber = call.argument("phone_number");
-    final String isoCode = call.argument("iso_code");
 
-    AsYouTypeFormatter asYouTypeFormatter = phoneUtil.getAsYouTypeFormatter(isoCode.toUpperCase());
-    String res = null;
-    for (int i = 0; i < phoneNumber.length(); i++) {
-      res = asYouTypeFormatter.inputDigit(phoneNumber.charAt(i));
+    private void handleGetNumberType(MethodCall call, Result result) {
+        final String phoneNumber = call.argument("phone_number");
+        final String isoCode = call.argument("iso_code");
+
+        try {
+            Phonenumber.PhoneNumber p = phoneUtil.parse(phoneNumber, isoCode.toUpperCase());
+            PhoneNumberUtil.PhoneNumberType t = phoneUtil.getNumberType(p);
+
+            switch (t) {
+                case FIXED_LINE:
+                    result.success(0);
+                    break;
+                case MOBILE:
+                    result.success(1);
+                    break;
+                case FIXED_LINE_OR_MOBILE:
+                    result.success(2);
+                    break;
+                case TOLL_FREE:
+                    result.success(3);
+                    break;
+                case PREMIUM_RATE:
+                    result.success(4);
+                    break;
+                case SHARED_COST:
+                    result.success(5);
+                    break;
+                case VOIP:
+                    result.success(6);
+                    break;
+                case PERSONAL_NUMBER:
+                    result.success(7);
+                    break;
+                case PAGER:
+                    result.success(8);
+                    break;
+                case UAN:
+                    result.success(9);
+                    break;
+                case VOICEMAIL:
+                    result.success(10);
+                    break;
+                case UNKNOWN:
+                    result.success(-1);
+                    break;
+            }
+        } catch (NumberParseException e) {
+            result.error("NumberParseException", e.getMessage(), null);
+        }
     }
-    result.success(res);
-  }
+
+    private void formatAsYouType(MethodCall call, Result result) {
+        final String phoneNumber = call.argument("phone_number");
+        final String isoCode = call.argument("iso_code");
+
+        AsYouTypeFormatter asYouTypeFormatter = phoneUtil.getAsYouTypeFormatter(isoCode.toUpperCase());
+        String res = null;
+        for (int i = 0; i < phoneNumber.length(); i++) {
+            res = asYouTypeFormatter.inputDigit(phoneNumber.charAt(i));
+        }
+        result.success(res);
+    }
 }

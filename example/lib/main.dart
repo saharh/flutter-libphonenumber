@@ -14,6 +14,7 @@ class _MyAppState extends State<MyApp> {
   bool _isValid = false;
   String _normalized = '';
   RegionInfo _regionInfo;
+  String _carrierName = '';
   String _formatted = '';
   String _regionIso = 'US';
   TextEditingController _regionIsoController;
@@ -37,11 +38,14 @@ class _MyAppState extends State<MyApp> {
     bool isValid = await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: _regionIso);
     String normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(phoneNumber: s, isoCode: _regionIso);
     RegionInfo regionInfo = await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: _regionIso);
+    String carrierName =
+        await PhoneNumberUtil.getNameForNumber(phoneNumber: s, isoCode: 'US');
     String formatted = await PhoneNumberUtil.formatPhone(phone: s, regionIsoCode: _regionIso);
     setState(() {
       _isValid = isValid;
       _normalized = normalizedNumber;
       _regionInfo = regionInfo;
+      _carrierName = carrierName;
       _formatted = formatted;
     });
   }
@@ -137,6 +141,19 @@ class _MyAppState extends State<MyApp> {
                     _regionIso = val;
                   });
                 },
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Carrier'),
+            Padding(
+              padding: EdgeInsets.only(left: 12.0),
+              child: Text(
+                'Carrier Name=${_carrierName}',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
