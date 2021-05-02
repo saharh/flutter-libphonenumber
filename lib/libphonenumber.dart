@@ -19,12 +19,12 @@ class RegionInfo {
 
   factory RegionInfo.fromMap(Map<String, dynamic> map) {
     return new RegionInfo(
-      regionPrefix: map['regionCode'] as String,
-      isoCode: map['isoCode'] as String,
-      nationalFormat: map['nationalFormat'] as String,
-      internationalFormat: map['internationalFormat'] as String,
-      e164Format: map['e164Format'] as String,
-      isValid: map['isValid'] as bool,
+      regionPrefix: map['regionCode'] as String?,
+      isoCode: map['isoCode'] as String?,
+      nationalFormat: map['nationalFormat'] as String?,
+      internationalFormat: map['internationalFormat'] as String?,
+      e164Format: map['e164Format'] as String?,
+      isValid: map['isValid'] as bool?,
     );
   }
 

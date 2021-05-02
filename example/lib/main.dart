@@ -17,13 +17,13 @@ class _MyAppState extends State<MyApp> {
   String _carrierName = '';
   String _formatted = '';
   String _regionIso = 'US';
-  TextEditingController _regionIsoController;
+  TextEditingController _regionIsoController = TextEditingController(text: 'US');
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _regionIsoController = TextEditingController(text: _regionIso);
+
   }
 
   @override
@@ -36,13 +36,13 @@ class _MyAppState extends State<MyApp> {
     var s = _textController.text;
 
     bool? isValid =
-        await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: 'US');
+        await PhoneNumberUtil.isValidPhoneNumber(phoneNumber: s, isoCode: _regionIso);
     String? normalizedNumber = await PhoneNumberUtil.normalizePhoneNumber(
-        phoneNumber: s, isoCode: 'US');
+        phoneNumber: s, isoCode: _regionIso);
     RegionInfo regionInfo =
-        await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: 'US');
+        await PhoneNumberUtil.getRegionInfo(phoneNumber: s, isoCode: _regionIso);
     String? carrierName =
-        await PhoneNumberUtil.getNameForNumber(phoneNumber: s, isoCode: 'US');
+        await PhoneNumberUtil.getNameForNumber(phoneNumber: s, isoCode: _regionIso);
     String formatted = await PhoneNumberUtil.formatPhone(phone: s, regionIsoCode: _regionIso);
     setState(() {
       _isValid = isValid??false;
